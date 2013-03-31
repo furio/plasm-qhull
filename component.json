@@ -1,0 +1,16 @@
+{
+  "name": "qhull",
+  "repo": "furio/qull",
+  "description": "convex hull implemented with quick hull",
+  "version": "0.0.1",
+  "keywords": [
+    "convex hull"
+  ],
+  "scripts": [
+    "index.js"
+  ],
+  "dependencies": {
+    "cvdlab/simplexn": "*"
+  },
+  "license": "MIT"
+}
