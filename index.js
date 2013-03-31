@@ -317,8 +317,8 @@ qhull._hull.compute.updateFacetList = function (referenceFacet,facetList,convexH
 };
 
 /**
- * utils.Facet namespace
- * @api public
+ * hull.Facet namespace
+ * @api private
  */
 
 var Facet =
@@ -374,8 +374,8 @@ qhull._hull.Facet.prototype.setUpperLower = function(pointList,centroid) {
 };
 
 /**
- * utils.Cell namespace
- * @api public
+ * hull.Cell namespace
+ * @api private
  */
 
 var Cell = 
