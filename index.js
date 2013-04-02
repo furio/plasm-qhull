@@ -200,13 +200,13 @@ qhull._hull.compute.indepPts2 = function (pointSet) {
 				var temp = maxInDim[d];
 				maxInDim[d] = pointSet[i];
 				if(! _arrayContains(maxInDim, temp)) {
-					remSet.add([temp]);
+					_arrayAdd( remSet, [temp] );
 				}
 				added = true;
 			}
 		}
 		if(!added) {
-			remSet.add([pointSet[i]]);
+			_arrayAdd( remSet, [pointSet[i]] );
 		}
 	}
 	var coefficients = _points2HyperplaneCoefficients(maxInDim);
@@ -259,10 +259,10 @@ qhull._hull.compute.updateFacetList = function (referenceFacet,facetList,convexH
 	var dividedFacetList = {
 		visibleFacetList : [referenceFacet],
 		hiddenFacetList : convexHullList.concat()
-	}
+	};
 	
 	var coplanarCounter = 0;
-	if( _point2HyperplaneDistance(referenceFacet.leastPoint,referenceFacet.hyperplaneCoefficients) == 0) {
+	if( _point2HyperplaneDistance(referenceFacet.leastPoint,referenceFacet.hyperplaneCoefficients) === 0) {
 		coplanarCounter++;
 	}
 	for(var i = 0; i < facetList.length; i++) {
@@ -270,7 +270,7 @@ qhull._hull.compute.updateFacetList = function (referenceFacet,facetList,convexH
 		var sign = _point2HyperplaneDistance(currentFacet.centroid,currentFacet.hyperplaneCoefficients) < 0 ? 1 : -1;
 		var distance = _point2HyperplaneDistance(referenceFacet.leastPoint,currentFacet.hyperplaneCoefficients);
 		if(distance * sign >= 0 ) {
-			if(distance == 0)
+			if(distance === 0)
 				coplanarCounter++;
 			dividedFacetList.visibleFacetList.push(currentFacet);
 		} else {
@@ -287,13 +287,13 @@ qhull._hull.compute.updateFacetList = function (referenceFacet,facetList,convexH
 		var horizon = [];
 		for(var i = 0; i < dividedFacetList.visibleFacetList.length; i++) {
 			var tempRidges = dividedFacetList.visibleFacetList[i].ridges;
-			remainingPoints.add(dividedFacetList.visibleFacetList[i].upperSet.filter( function (item) {
+			_arrayAdd(remainingPoints, dividedFacetList.visibleFacetList[i].upperSet.filter( function (item) {
 				return item !== referenceFacet.leastPoint;
 			}));
 			for(var j = 0; j < tempRidges.length; j++) {
 				var tempRidge = tempRidges[j];
 				for(var k = 0; k < dividedFacetList.hiddenFacetList.length; k++) {
-					if(dividedFacetList.hiddenFacetList[k].ridges.contains(tempRidge)) {
+					if( _arrayContains( dividedFacetList.hiddenFacetList[k].ridges, tempRidge) ) {
 						horizon.push(tempRidge);
 					}
 				}
@@ -307,7 +307,7 @@ qhull._hull.compute.updateFacetList = function (referenceFacet,facetList,convexH
 		}
 		for(var i = 0; i < horizon.length; i++) {
 			var facet = new Facet();
-			horizon[i].push(referenceFacet.leastPoint)
+			horizon[i].push(referenceFacet.leastPoint);
 			facet.fromPoints(horizon[i]);
 			facet.setUpperLower(remainingPoints,referenceFacet.centroid);
 			newFacetList.push(facet);
@@ -382,11 +382,11 @@ var Cell =
 qhull._hull.Cell = function () {
 	this.vertices = [];
 	this.ridges = [];
-}
+};
 
 qhull._hull.Cell.prototype.fromFacets = function(facetList) {
 	for(var i = 0; i < facetList.length; i++) {
-		this.vertices.add(facetList[i].vertices);
+		_arrayAdd( this.vertices, facetList[i].vertices );
 	}
 
 	var tempSingle = [];
@@ -418,7 +418,7 @@ qull._hull.createHull = function(pointList) {
 	
 	while(facetList.length > 0) {
 		var currentFacet = facetList.shift();
-		if(currentFacet.upperSet.isEmpty()) {
+		if( _arrayisEmpty( currentFacet.upperSet ) ) {
 			convexHullList.push(currentFacet);
 		} else {
 			facetList = _updateFacetList(currentFacet,facetList,convexHullList);
