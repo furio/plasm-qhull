@@ -428,12 +428,51 @@ qull._hull.createHull = function(pointList) {
 	return convexHullList;
 };
 
-// return a simplexn.pointset
-qull.getHull = function(pointList) {
-	
+var _ptListChecks =
+qull._hull.ptListChecks = function(pointList) {
+	if ( Object.prototype.toString.call( pointList ) !== '[object Array]' ) {
+		return false;
+	}
+
+	var allPoints = pointList.every(function(el) {
+		return ( Object.prototype.toString.call( el ) !== '[object Array]' );
+	});
+
+	return allPoints;
 };
 
-// return a simplexn.simplicialcomplex
+// return a simplexn.PointSet
+qull.getHull = function(pointList) {
+	if ( _ptListChecks !== true ) {
+		return;
+	}
+
+	var cHullResult = _createHull( pointList );
+	var ptListResult = [];
+
+	cHullResult.forEach(function(facet) {
+		_arrayAdd(ptListResult, facet.vertices);
+	});
+
+	return simplexn.PointSet(ptListResult);
+};
+
+// return a simplexn.Struct
 qull.getHullSimplicial = function(pointList) {
-	
+	if ( _ptListChecks !== true ) {
+		return;
+	}
+
+	var cHullResult = _createHull( pointList );
+	var simplexResult = [];
+	var verEnum = [];
+
+	cHullResult.forEach(function(facet) {
+		verEnum = [];
+		facet.vertices.forEach(function(el, idx) { verEnum.push(idx); } );
+
+		simplexResult.push( new simplexn.SimplicialComplex(facet.vertices, [verEnum]) );
+	});	
+
+	return new simplexn.Struct(simplexResult);
 };
